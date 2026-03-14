@@ -1,53 +1,520 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- 页面标题，可替换为你的研究方向 -->
-    <title>Research Demo Page</title>
-    <style>
-        /* 极简样式，保证可读性，无多余装饰 */
-        body {
-            font-family: "Times New Roman", serif; /* 学术常用字体 */
-            max-width: 900px;
-            margin: 40px auto;
-            padding: 0 20px;
-            line-height: 1.6;
-            color: #333;
-        }
-        .container {
-            border-top: 2px solid #666;
-            padding-top: 20px;
-        }
-        h1 {
-            font-size: 24px;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .abstract-section {
-            margin-top: 30px;
-        }
-        h2 {
-            font-size: 18px;
-            color: #444;
-            border-bottom: 1px solid #ddd;
-            padding-bottom: 5px;
-        }
-        .placeholder {
-            color: #888; /* 占位文本灰色，醒目易替换 */
-        }
-    </style>
+	<meta charset="utf-8">
+	<meta name="generator" content="Hugo 0.88.1" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<style type="text/css">@font-face {font-family:Roboto;font-style:normal;font-weight:300;src:url(/cf-fonts/s/roboto/5.0.11/cyrillic-ext/300/normal.woff2);unicode-range:U+0460-052F,U+1C80-1C88,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F;font-display:swap;}@font-face {font-family:Roboto;font-style:normal;font-weight:300;src:url(/cf-fonts/s/roboto/5.0.11/cyrillic/300/normal.woff2);unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;font-display:swap;}@font-face {font-family:Roboto;font-style:normal;font-weight:300;src:url(/cf-fonts/s/roboto/5.0.11/greek-ext/300/normal.woff2);unicode-range:U+1F00-1FFF;font-display:swap;}@font-face {font-family:Roboto;font-style:normal;font-weight:300;src:url(/cf-fonts/s/roboto/5.0.11/vietnamese/300/normal.woff2);unicode-range:U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB;font-display:swap;}@font-face {font-family:Roboto;font-style:normal;font-weight:300;src:url(/cf-fonts/s/roboto/5.0.11/greek/300/normal.woff2);unicode-range:U+0370-03FF;font-display:swap;}@font-face {font-family:Roboto;font-style:normal;font-weight:300;src:url(/cf-fonts/s/roboto/5.0.11/latin/300/normal.woff2);unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;font-display:swap;}@font-face {font-family:Roboto;font-style:normal;font-weight:300;src:url(/cf-fonts/s/roboto/5.0.11/latin-ext/300/normal.woff2);unicode-range:U+0100-02AF,U+0304,U+0308,U+0329,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20CF,U+2113,U+2C60-2C7F,U+A720-A7FF;font-display:swap;}@font-face {font-family:Roboto;font-style:normal;font-weight:400;src:url(/cf-fonts/s/roboto/5.0.11/vietnamese/400/normal.woff2);unicode-range:U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB;font-display:swap;}@font-face {font-family:Roboto;font-style:normal;font-weight:400;src:url(/cf-fonts/s/roboto/5.0.11/latin/400/normal.woff2);unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;font-display:swap;}@font-face {font-family:Roboto;font-style:normal;font-weight:400;src:url(/cf-fonts/s/roboto/5.0.11/latin-ext/400/normal.woff2);unicode-range:U+0100-02AF,U+0304,U+0308,U+0329,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20CF,U+2113,U+2C60-2C7F,U+A720-A7FF;font-display:swap;}@font-face {font-family:Roboto;font-style:normal;font-weight:400;src:url(/cf-fonts/s/roboto/5.0.11/cyrillic-ext/400/normal.woff2);unicode-range:U+0460-052F,U+1C80-1C88,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F;font-display:swap;}@font-face {font-family:Roboto;font-style:normal;font-weight:400;src:url(/cf-fonts/s/roboto/5.0.11/greek/400/normal.woff2);unicode-range:U+0370-03FF;font-display:swap;}@font-face {font-family:Roboto;font-style:normal;font-weight:400;src:url(/cf-fonts/s/roboto/5.0.11/greek-ext/400/normal.woff2);unicode-range:U+1F00-1FFF;font-display:swap;}@font-face {font-family:Roboto;font-style:normal;font-weight:400;src:url(/cf-fonts/s/roboto/5.0.11/cyrillic/400/normal.woff2);unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;font-display:swap;}@font-face {font-family:Roboto;font-style:normal;font-weight:700;src:url(/cf-fonts/s/roboto/5.0.11/cyrillic-ext/700/normal.woff2);unicode-range:U+0460-052F,U+1C80-1C88,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F;font-display:swap;}@font-face {font-family:Roboto;font-style:normal;font-weight:700;src:url(/cf-fonts/s/roboto/5.0.11/vietnamese/700/normal.woff2);unicode-range:U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB;font-display:swap;}@font-face {font-family:Roboto;font-style:normal;font-weight:700;src:url(/cf-fonts/s/roboto/5.0.11/cyrillic/700/normal.woff2);unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;font-display:swap;}@font-face {font-family:Roboto;font-style:normal;font-weight:700;src:url(/cf-fonts/s/roboto/5.0.11/greek-ext/700/normal.woff2);unicode-range:U+1F00-1FFF;font-display:swap;}@font-face {font-family:Roboto;font-style:normal;font-weight:700;src:url(/cf-fonts/s/roboto/5.0.11/latin/700/normal.woff2);unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;font-display:swap;}@font-face {font-family:Roboto;font-style:normal;font-weight:700;src:url(/cf-fonts/s/roboto/5.0.11/latin-ext/700/normal.woff2);unicode-range:U+0100-02AF,U+0304,U+0308,U+0329,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20CF,U+2113,U+2C60-2C7F,U+A720-A7FF;font-display:swap;}@font-face {font-family:Roboto;font-style:normal;font-weight:700;src:url(/cf-fonts/s/roboto/5.0.11/greek/700/normal.woff2);unicode-range:U+0370-03FF;font-display:swap;}</style>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/github.min.css">
+	<link rel="stylesheet" href="css/custom.css">
+	<link rel="stylesheet" href="css/normalize.css">
+
+	<title>StreamTN</title>
+	<link href="css/bootstrap.min.css" rel="stylesheet">
+
 </head>
-<body>
-    <div class="container">
-        <!-- 题目位置：替换下面的占位文本即可 -->
-        <h1 class="placeholder">StreamTN: A Low-Latency Streaming Chinese Text Normalization Model for Streaming TTS in Dialogue Systems</h1>
-        
-        <!-- 摘要位置：替换下面的占位文本即可 -->
-        <div class="abstract-section">
-            <h2>Abstract</h2>
-            <p class="placeholder">Text-to-Speech (TTS) is an essential module that provides spoken responses in an LLM-centered spoken dialogue system (SDS). To ensure accurate TTS synthesis, responses generated by an LLM must be converted into TTS-readable formats via a Text Normalization (TN) module, imposing strict low-latency requirements in real-time SDS scenarios. Existing TN solutions are largely rule-based, rely on manual engineering, and generalize poorly to unseen patterns. Although an LLM itself can perform TN through prompt engineering, it faces key limitations: high first-token latency due to non-streaming processing, hallucination risks, and degraded intelligence or reasoning when the core LLM module is fine-tuned solely for TN. To address these challenges, we propose \textit{StreamTN}, a lightweight LLM-based Chinese streaming TN model. Built on Qwen3-0.6B, StreamTN employs a dual-track streaming framework in which input tokens and output tokens are processed on two parallel tracks, enabling low-latency real-time inference without complex prompting. Moreover, task-specific fine-tuning yields superior TN performance and fewer hallucinations than rule-based systems and general-purpose LLMs. We also introduce a TN benchmark that spans diverse text scenarios, providing a comprehensive evaluation standard for speech generation in spoken dialogue systems. Experiments demonstrate the effectiveness of StreamTN in accuracy and inference latency.</p>
-        </div>
-    </div>
+
+
+<body data-new-gr-c-s-check-loaded="14.1091.0" data-gr-ext-installed="">
+
+<div class="container" >
+<header role="banner">
+</header>
+<main role="main">
+<article itemscope itemtype="https://schema.org/BlogPosting">
+
+<div class="container pt-5 mt-5 shadow-lg p-5 mb-5 bg-white rounded">
+	<div class="text-center">
+	<h2>StreamTN: </h2>
+      <h3>A Low-Latency Streaming Chinese Text Normalization Model for Streaming TTS in Dialogue Systems</h3>
+	</div>
+	<p><b>Abstract</b> Text-to-Speech (TTS) is an essential module that provides spoken responses in an LLM-centered spoken dialogue system (SDS). To ensure accurate TTS synthesis, responses generated by an LLM must be converted into TTS-readable formats via a Text Normalization (TN) module, imposing strict low-latency requirements in real-time SDS scenarios. Existing TN solutions are largely rule-based, rely on manual engineering, and generalize poorly to unseen patterns. Although an LLM itself can perform TN through prompt engineering, it faces key limitations: high first-token latency due to non-streaming processing, hallucination risks, and degraded intelligence or reasoning when the core LLM module is fine-tuned solely for TN. To address these challenges, we propose \textit{StreamTN}, a lightweight LLM-based Chinese streaming TN model. Built on Qwen3-0.6B, StreamTN employs a dual-track streaming framework in which input tokens and output tokens are processed on two parallel tracks, enabling low-latency real-time inference without complex prompting. Moreover, task-specific fine-tuning yields superior TN performance and fewer hallucinations than rule-based systems and general-purpose LLMs. We also introduce a TN benchmark that spans diverse text scenarios, providing a comprehensive evaluation standard for speech generation in spoken dialogue systems. Experiments demonstrate the effectiveness of StreamTN in accuracy and inference latency.
+	</p>
+
+	<p><b>This page is for research demonstration purposes only.</b></p>
+
+	
+</div>
+
+
+<div class="container pt-5 mt-5 shadow-lg p-5 mb-5 bg-white rounded">		
+	<h2 id="model-overview" style="text-align: center;">System Overview</h2>
+	<body>
+	<p style="text-align: center;">
+		<img src="pic/streamtn.png" height="500" width="1000">
+	</p>
+	</body>
+		<p style="text-align: center;" >
+			<b>Figure 1.</b>The architecture of our proposed StreamTn model.
+		</p>
+</div>
+
+<!-- 1.1 整数与小数 -->
+<div class="container pt-5 mt-5 shadow-lg p-5 mb-5 bg-white rounded">
+	<h2 style="text-align: center;">整数与小数</h2>
+	<div class="table-responsive pt-3">
+		<table class="table table-hover pt-2">
+			<thead>
+			<tr>
+			<th style="vertical-align:middle; text-align:center">输入文本</th>
+			<th style="vertical-align:middle; text-align:center">标准规范化结果</th>
+			<th style="vertical-align:middle; text-align:center">模型输出</th>
+			</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td style="vertical-align:middle; text-align:center">商品原价1234元，现价888.5元</td>
+					<td style="vertical-align:middle; text-align:center">商品原价一千二百三十四元，现价八百八十八点五元</td>
+					<td style="vertical-align:middle; text-align:center">商品原价一千二百三十四元，现价八百八十八点五元</td>
+				</tr>
+				<tr>
+					<td style="vertical-align:middle; text-align:center">实验室温度计显示-273.15℃</td>
+					<td style="vertical-align:middle; text-align:center">实验室温度计显示负二百七十三点一五摄氏度</td>
+					<td style="vertical-align:middle; text-align:center">实验室温度计显示负二百七十三点一五摄氏度</td>
+				</tr>
+				<tr>
+					<td style="vertical-align:middle; text-align:center">马拉松全程42.195公里</td>
+					<td style="vertical-align:middle; text-align:center">马拉松全程四十二点一九五公里</td>
+					<td style="vertical-align:middle; text-align:center">马拉松全程四十二点一九五公里</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<!-- 1.2 序数词 -->
+<div class="container pt-5 mt-5 shadow-lg p-5 mb-5 bg-white rounded">
+	<h2 style="text-align: center;">序数词</h2>
+	<div class="table-responsive pt-3">
+		<table class="table table-hover pt-2">
+			<thead>
+			<tr>
+			<th style="vertical-align:middle; text-align:center">输入文本</th>
+			<th style="vertical-align:middle; text-align:center">标准规范化结果</th>
+			<th style="vertical-align:middle; text-align:center">模型输出</th>
+			</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td style="vertical-align:middle; text-align:center">他在全国大学生辩论赛中获得第1名，团队成员都感到非常自豪。</td>
+					<td style="vertical-align:middle; text-align:center">他在全国大学生辩论赛中获得第一名，团队成员都感到非常自豪。</td>
+					<td style="vertical-align:middle; text-align:center">他在全国大学生辩论赛中获得第一名，团队成员都感到非常自豪。</td>
+				</tr>
+				<tr>
+					<td style="vertical-align:middle; text-align:center">本次马拉松比赛的第2名选手因伤退赛，冠军由第3名递补获得。</td>
+					<td style="vertical-align:middle; text-align:center">本次马拉松比赛的第二名选手因伤退赛，冠军由第三名递补获得。</td>
+					<td style="vertical-align:middle; text-align:center">本次马拉松比赛的第二名选手因伤退赛，冠军由第三名递补获得。</td>
+				</tr>
+				<tr>
+					<td style="vertical-align:middle; text-align:center">根据最新排名，第4名和第5名的积分差距仅为几分。</td>
+					<td style="vertical-align:middle; text-align:center">根据最新排名，第四名和第五名的积分差距仅为几分。</td>
+					<td style="vertical-align:middle; text-align:center">根据最新排名，第四名和第五名的积分差距仅为几分。</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<!-- 1.3 电话号码 -->
+<div class="container pt-5 mt-5 shadow-lg p-5 mb-5 bg-white rounded">
+	<h2 style="text-align: center;">电话号码</h2>
+	<div class="table-responsive pt-3">
+		<table class="table table-hover pt-2">
+			<thead>
+			<tr>
+			<th style="vertical-align:middle; text-align:center">输入文本</th>
+			<th style="vertical-align:middle; text-align:center">标准规范化结果</th>
+			<th style="vertical-align:middle; text-align:center">模型输出</th>
+			</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td style="vertical-align:middle; text-align:center">预约挂号请拨打13900000000，工作日上午九点至下午五点有效</td>
+					<td style="vertical-align:middle; text-align:center">预约挂号请拨打一三九零零零零零零零零，工作日上午九点至下午五点有效</td>
+					<td style="vertical-align:middle; text-align:center">预约挂号请拨打一三九零零零零零零零零，工作日上午九点至下午五点有效</td>
+				</tr>
+				<tr>
+					<td style="vertical-align:middle; text-align:center">会员专属客服电话18877778888，提供个性化咨询服务</td>
+					<td style="vertical-align:middle; text-align:center">会员专属客服电话一八八七七七七八八八八，提供个性化咨询服务</td>
+					<td style="vertical-align:middle; text-align:center">会员专属客服电话一八八七七七七八八八八，提供个性化咨询服务</td>
+				</tr>
+				<tr>
+					<td style="vertical-align:middle; text-align:center">校园招聘咨询电话19988889999，附带简历投递邮箱地址</td>
+					<td style="vertical-align:middle; text-align:center">校园招聘咨询电话一九九八八八八九九九九，附带简历投递邮箱地址</td>
+					<td style="vertical-align:middle; text-align:center">校园招聘咨询电话一九九八八八八九九九九，附带简历投递邮箱地址</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<!-- 1.4 年份与日期 -->
+<div class="container pt-5 mt-5 shadow-lg p-5 mb-5 bg-white rounded">
+	<h2 style="text-align: center;">年份与日期</h2>
+	<div class="table-responsive pt-3">
+		<table class="table table-hover pt-2">
+			<thead>
+			<tr>
+			<th style="vertical-align:middle; text-align:center">输入文本</th>
+			<th style="vertical-align:middle; text-align:center">标准规范化结果</th>
+			<th style="vertical-align:middle; text-align:center">模型输出</th>
+			</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td style="vertical-align:middle; text-align:center">2025年国际人工智能大会将在上海召开</td>
+					<td style="vertical-align:middle; text-align:center">二零二五年国际人工智能大会将在上海召开</td>
+					<td style="vertical-align:middle; text-align:center">二零二五年国际人工智能大会将在上海召开</td>
+				</tr>
+				<tr>
+					<td style="vertical-align:middle; text-align:center">根据2025年1月1日实施的新政策</td>
+					<td style="vertical-align:middle; text-align:center">根据二零二五年一月一日实施的新政策</td>
+					<td style="vertical-align:middle; text-align:center">根据二零二五年一月一日实施的新政策</td>
+				</tr>
+				<tr>
+					<td style="vertical-align:middle; text-align:center">2025年4月15日是项目最终提交截止日期</td>
+					<td style="vertical-align:middle; text-align:center">二零二五年四月十五日是项目最终提交截止日期</td>
+					<td style="vertical-align:middle; text-align:center">二零二五年四月十五日是项目最终提交截止日期</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<!-- 1.5 时间 -->
+<div class="container pt-5 mt-5 shadow-lg p-5 mb-5 bg-white rounded">
+	<h2 style="text-align: center;">时间</h2>
+	<div class="table-responsive pt-3">
+		<table class="table table-hover pt-2">
+			<thead>
+			<tr>
+			<th style="vertical-align:middle; text-align:center">输入文本</th>
+			<th style="vertical-align:middle; text-align:center">标准规范化结果</th>
+			<th style="vertical-align:middle; text-align:center">模型输出</th>
+			</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td style="vertical-align:middle; text-align:center">电影《星际穿越》将于18:30在第三影厅放映，请提前十分钟入场。</td>
+					<td style="vertical-align:middle; text-align:center">电影《星际穿越》将于十八点三十分在第三影厅放映，请提前十分钟入场。</td>
+					<td style="vertical-align:middle; text-align:center">电影《星际穿越》将于十八点三十分在第三影厅放映，请提前十分钟入场。</td>
+				</tr>
+				<tr>
+					<td style="vertical-align:middle; text-align:center">截止日期是今晚23:59，请确保所有材料按时提交。</td>
+					<td style="vertical-align:middle; text-align:center">截止日期是今晚二十三点五十九分，请确保所有材料按时提交。</td>
+					<td style="vertical-align:middle; text-align:center">截止日期是今晚二十三点五十九分，请确保所有材料按时提交。</td>
+				</tr>
+				<tr>
+					<td style="vertical-align:middle; text-align:center">演出将在8:45开始，请提前入场并关闭手机以免影响他人。</td>
+					<td style="vertical-align:middle; text-align:center">演出将在八点四十五分开始，请提前入场并关闭手机以免影响他人。</td>
+					<td style="vertical-align:middle; text-align:center">演出将在八点四十五分开始，请提前入场并关闭手机以免影响他人。</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<!-- 1.6 分数与百分数 -->
+<div class="container pt-5 mt-5 shadow-lg p-5 mb-5 bg-white rounded">
+	<h2 style="text-align: center;">分数与百分数</h2>
+	<div class="table-responsive pt-3">
+		<table class="table table-hover pt-2">
+			<thead>
+			<tr>
+			<th style="vertical-align:middle; text-align:center">输入文本</th>
+			<th style="vertical-align:middle; text-align:center">标准规范化结果</th>
+			<th style="vertical-align:middle; text-align:center">模型输出</th>
+			</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td style="vertical-align:middle; text-align:center">调查显示，3/4的参与者支持这一政策。</td>
+					<td style="vertical-align:middle; text-align:center">调查显示，四分之三的参与者支持这一政策。</td>
+					<td style="vertical-align:middle; text-align:center">调查显示，四分之三的参与者支持这一政策。</td>
+				</tr>
+				<tr>
+					<td style="vertical-align:middle; text-align:center">商品的折扣价为原价的2/5。</td>
+					<td style="vertical-align:middle; text-align:center">商品的折扣价为原价的五分之二。</td>
+					<td style="vertical-align:middle; text-align:center">商品的折扣价为原价的五分之二。</td>
+				</tr>
+				<tr>
+					<td style="vertical-align:middle; text-align:center">报告显示，75%的用户对产品表示满意。</td>
+					<td style="vertical-align:middle; text-align:center">报告显示，百分之七十五的用户对产品表示满意。</td>
+					<td style="vertical-align:middle; text-align:center">报告显示，百分之七十五的用户对产品表示满意。</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<!-- 1.7 军事口令 -->
+<div class="container pt-5 mt-5 shadow-lg p-5 mb-5 bg-white rounded">
+	<h2 style="text-align: center;">军事口令</h2>
+	<div class="table-responsive pt-3">
+		<table class="table table-hover pt-2">
+			<thead>
+			<tr>
+			<th style="vertical-align:middle; text-align:center">输入文本</th>
+			<th style="vertical-align:middle; text-align:center">标准规范化结果</th>
+			<th style="vertical-align:middle; text-align:center">模型输出</th>
+			</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td style="vertical-align:middle; text-align:center">敌军在405高地部署了重武器，准备发起攻击。</td>
+					<td style="vertical-align:middle; text-align:center">敌军在四洞五高地部署了重武器，准备发起攻击。</td>
+					<td style="vertical-align:middle; text-align:center">敌军在四洞五高地部署了重武器，准备发起攻击。</td>
+				</tr>
+				<tr>
+					<td style="vertical-align:middle; text-align:center">目标坐标为608，立即行动以确保区域安全。</td>
+					<td style="vertical-align:middle; text-align:center">目标坐标为六洞八，立即行动以确保区域安全。</td>
+					<td style="vertical-align:middle; text-align:center">目标坐标为六洞八，立即行动以确保区域安全。</td>
+				</tr>
+				<tr>
+					<td style="vertical-align:middle; text-align:center">确认806号任务已经顺利完成，无任何异常情况。</td>
+					<td style="vertical-align:middle; text-align:center">确认八洞六号任务已经顺利完成，无任何异常情况。</td>
+					<td style="vertical-align:middle; text-align:center">确认八洞六号任务已经顺利完成，无任何异常情况。</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<!-- 2.1 大写金额转写 -->
+<div class="container pt-5 mt-5 shadow-lg p-5 mb-5 bg-white rounded">
+	<h2 style="text-align: center;">大写金额转写</h2>
+	<div class="table-responsive pt-3">
+		<table class="table table-hover pt-2">
+			<thead>
+			<tr>
+			<th style="vertical-align:middle; text-align:center">输入文本</th>
+			<th style="vertical-align:middle; text-align:center">标准规范化结果</th>
+			<th style="vertical-align:middle; text-align:center">模型输出</th>
+			</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td style="vertical-align:middle; text-align:center">此次交易金额为壹佰贰拾伍元整，请双方确认。</td>
+					<td style="vertical-align:middle; text-align:center">此次交易金额为一百二十五元整，请双方确认。</td>
+					<td style="vertical-align:middle; text-align:center">此次交易金额为一百二十五元整，请双方确认。</td>
+				</tr>
+				<tr>
+					<td style="vertical-align:middle; text-align:center">发票金额显示为贰仟叁佰元整，需重新核对。</td>
+					<td style="vertical-align:middle; text-align:center">发票金额显示为二千三百元整，需重新核对。</td>
+					<td style="vertical-align:middle; text-align:center">发票金额显示为二千三百元整，需重新核对。</td>
+				</tr>
+				<tr>
+					<td style="vertical-align:middle; text-align:center">该账户余额壹万伍仟元整，已超过信用额度。</td>
+					<td style="vertical-align:middle; text-align:center">该账户余额一万五千元整，已超过信用额度。</td>
+					<td style="vertical-align:middle; text-align:center">该账户余额一万五千元整，已超过信用额度。</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<!-- 2.2 金额读法 -->
+<div class="container pt-5 mt-5 shadow-lg p-5 mb-5 bg-white rounded">
+	<h2 style="text-align: center;">金额读法</h2>
+	<div class="table-responsive pt-3">
+		<table class="table table-hover pt-2">
+			<thead>
+			<tr>
+			<th style="vertical-align:middle; text-align:center">输入文本</th>
+			<th style="vertical-align:middle; text-align:center">标准规范化结果</th>
+			<th style="vertical-align:middle; text-align:center">模型输出</th>
+			</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td style="vertical-align:middle; text-align:center">欧元区进口费用为€48.91，需要预付定金</td>
+					<td style="vertical-align:middle; text-align:center">欧元区进口费用为四十八点九一欧元，需要预付定金</td>
+					<td style="vertical-align:middle; text-align:center">欧元区进口费用为四十八点九一欧元，需要预付定金</td>
+				</tr>
+				<tr>
+					<td style="vertical-align:middle; text-align:center">信用卡消费记录显示$850.25，尚未还款</td>
+					<td style="vertical-align:middle; text-align:center">信用卡消费记录显示八百五十点二五美元，尚未还款</td>
+					<td style="vertical-align:middle; text-align:center">信用卡消费记录显示八百五十点二五美元，尚未还款</td>
+				</tr>
+				<tr>
+					<td style="vertical-align:middle; text-align:center">国际机票价格为€350.75，含税费及保险</td>
+					<td style="vertical-align:middle; text-align:center">国际机票价格为三百五十点七五欧元，含税费及保险</td>
+					<td style="vertical-align:middle; text-align:center">国际机票价格为三百五十点七五欧元，含税费及保险</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<!-- 3.1 物理单位 -->
+<div class="container pt-5 mt-5 shadow-lg p-5 mb-5 bg-white rounded">
+	<h2 style="text-align: center;">物理单位</h2>
+	<div class="table-responsive pt-3">
+		<table class="table table-hover pt-2">
+			<thead>
+			<tr>
+			<th style="vertical-align:middle; text-align:center">输入文本</th>
+			<th style="vertical-align:middle; text-align:center">标准规范化结果</th>
+			<th style="vertical-align:middle; text-align:center">模型输出</th>
+			</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td style="vertical-align:middle; text-align:center">这个水杯的容量是500ml，足够装下一杯水。</td>
+					<td style="vertical-align:middle; text-align:center">这个水杯的容量是五百毫升，足够装下一杯水。</td>
+					<td style="vertical-align:middle; text-align:center">这个水杯的容量是五百毫升，足够装下一杯水。</td>
+				</tr>
+				<tr>
+					<td style="vertical-align:middle; text-align:center">汽车的续航里程是150km，适合长途旅行。</td>
+					<td style="vertical-align:middle; text-align:center">汽车的续航里程是一百五十公里，适合长途旅行。</td>
+					<td style="vertical-align:middle; text-align:center">汽车的续航里程是一百五十公里，适合长途旅行。</td>
+				</tr>
+				<tr>
+					<td style="vertical-align:middle; text-align:center">这个箱子的重量是25kg，搬运时需要小心。</td>
+					<td style="vertical-align:middle; text-align:center">这个箱子的重量是二十五千克，搬运时需要小心。</td>
+					<td style="vertical-align:middle; text-align:center">这个箱子的重量是二十五千克，搬运时需要小心。</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<!-- 4.2 简单化学物 -->
+<div class="container pt-5 mt-5 shadow-lg p-5 mb-5 bg-white rounded">
+	<h2 style="text-align: center;">简单化学物</h2>
+	<div class="table-responsive pt-3">
+		<table class="table table-hover pt-2">
+			<thead>
+			<tr>
+			<th style="vertical-align:middle; text-align:center">输入文本</th>
+			<th style="vertical-align:middle; text-align:center">标准规范化结果</th>
+			<th style="vertical-align:middle; text-align:center">模型输出</th>
+			</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td style="vertical-align:middle; text-align:center">烘焙饼干时，加入的NaHCO₃受热分解，生成CO₂气体使饼干松软。</td>
+					<td style="vertical-align:middle; text-align:center">烘焙饼干时，加入的碳酸氢钠受热分解，生成二氧化碳气体使饼干松软。</td>
+					<td style="vertical-align:middle; text-align:center">烘焙饼干时，加入的碳酸氢钠受热分解，生成二氧化碳气体使饼干松软。</td>
+				</tr>
+				<tr>
+					<td style="vertical-align:middle; text-align:center">洗衣粉中的Na₂CO₃能中和水中的Ca²⁺和Mg²⁺，提高洗涤效果。</td>
+					<td style="vertical-align:middle; text-align:center">洗衣粉中的碳酸钠能中和水中的钙离子和镁离子，提高洗涤效果。</td>
+					<td style="vertical-align:middle; text-align:center">洗衣粉中的碳酸钠能中和水中的钙离子和镁离子，提高洗涤效果。</td>
+				</tr>
+				<tr>
+					<td style="vertical-align:middle; text-align:center">矿泉水中的K⁺和Mg²⁺对人体健康有益，长期饮用有助于补充矿物质。</td>
+					<td style="vertical-align:middle; text-align:center">矿泉水中的钾离子和镁离子对人体健康有益，长期饮用有助于补充矿物质。</td>
+					<td style="vertical-align:middle; text-align:center">矿泉水中的钾离子和镁离子对人体健康有益，长期饮用有助于补充矿物质。</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<!-- 5.1 数学表达式 -->
+<div class="container pt-5 mt-5 shadow-lg p-5 mb-5 bg-white rounded">
+	<h2 style="text-align: center;">数学表达式</h2>
+	<div class="table-responsive pt-3">
+		<table class="table table-hover pt-2">
+			<thead>
+			<tr>
+			<th style="vertical-align:middle; text-align:center">输入文本</th>
+			<th style="vertical-align:middle; text-align:center">标准规范化结果</th>
+			<th style="vertical-align:middle; text-align:center">模型输出</th>
+			</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td style="vertical-align:middle; text-align:center">计算3×4÷2+1，结果为7</td>
+					<td style="vertical-align:middle; text-align:center">计算三乘四除以二加一，结果为七</td>
+					<td style="vertical-align:middle; text-align:center">计算三乘四除以二加一，结果为七</td>
+				</tr>
+				<tr>
+					<td style="vertical-align:middle; text-align:center">已知a=4，b=5，求a+b=9和a×b=20的值</td>
+					<td style="vertical-align:middle; text-align:center">已知a等于四，b等于五，求a加b等于九和a乘b等于二十的值</td>
+					<td style="vertical-align:middle; text-align:center">已知a等于四，b等于五，求a加b等于九和a乘b等于二十的值</td>
+				</tr>
+				<tr>
+					<td style="vertical-align:middle; text-align:center">计算√16+√9的结果是5</td>
+					<td style="vertical-align:middle; text-align:center">计算根号十六加根号九的结果是五</td>
+					<td style="vertical-align:middle; text-align:center">计算根号十六加根号九的结果是五</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<!-- 5.1 化学公式与反应 -->
+<div class="container pt-5 mt-5 shadow-lg p-5 mb-5 bg-white rounded">
+	<h2 style="text-align: center;">化学公式与反应</h2>
+	<div class="table-responsive pt-3">
+		<table class="table table-hover pt-2">
+			<thead>
+			<tr>
+			<th style="vertical-align:middle; text-align:center">输入文本</th>
+			<th style="vertical-align:middle; text-align:center">标准规范化结果</th>
+			<th style="vertical-align:middle; text-align:center">模型输出</th>
+			</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td style="vertical-align:middle; text-align:center">在298K时，AgBr的溶度积Ksp=5.0×10⁻¹³，其溶解平衡为AgBr(s) ⇌ Ag⁺ + Br⁻</td>
+					<td style="vertical-align:middle; text-align:center">在二百九十八开尔文时，溴化银的溶度积Ksp等于五点零乘以十的负十三次方，其溶解平衡为溴化银固体可逆生成银离子和溴离子</td>
+					<td style="vertical-align:middle; text-align:center">在二百九十八开尔文时，溴化银的溶度积Ksp等于五点零乘以十的负十三次方，其溶解平衡为溴化银固体可逆生成银离子和溴离子</td>
+				</tr>
+				<tr>
+					<td style="vertical-align:middle; text-align:center">NaCl晶胞为面心立方结构，每个晶胞包含4个Na⁺和4个Cl⁻</td>
+					<td style="vertical-align:middle; text-align:center">氯化钠晶胞为面心立方结构，每个晶胞包含四个钠离子和四个氯离子</td>
+					<td style="vertical-align:middle; text-align:center">氯化钠晶胞为面心立方结构，每个晶胞包含四个钠离子和四个氯离子</td>
+				</tr>
+				<tr>
+					<td style="vertical-align:middle; text-align:center">在加热条件下，n个CH₂=CH₂加聚生成[-CH₂-CH₂-]ₙ聚乙烯</td>
+					<td style="vertical-align:middle; text-align:center">在加热条件下，n个乙烯分子在催化剂作用下加聚生成聚乙烯</td>
+					<td style="vertical-align:middle; text-align:center">在加热条件下，n个乙烯分子在催化剂作用下加聚生成聚乙烯</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<!-- 5.2 高等数学表达式 -->
+<div class="container pt-5 mt-5 shadow-lg p-5 mb-5 bg-white rounded">
+	<h2 style="text-align: center;">高等数学表达式</h2>
+	<div class="table-responsive pt-3">
+		<table class="table table-hover pt-2">
+			<thead>
+			<tr>
+			<th style="vertical-align:middle; text-align:center">输入文本</th>
+			<th style="vertical-align:middle; text-align:center">标准规范化结果</th>
+			<th style="vertical-align:middle; text-align:center">模型输出</th>
+			</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td style="vertical-align:middle; text-align:center">设 f(x) = ∫₀ˣ e⁻ᵗ² dt / log(√x + 1)，求x→0时的极限</td>
+					<td style="vertical-align:middle; text-align:center">设函数 f(x) 是分子从零到x的定积分e的负t平方次方dt，分母是自然对数x开平方加一，求x趋近于零时的极限</td>
+					<td style="vertical-align:middle; text-align:center">设函数 f(x) 是分子从零到x的定积分e的负t平方次方dt，分母是自然对数x开平方加一，求x趋近于零时的极限</td>
+				</tr>
+				<tr>
+					<td style="vertical-align:middle; text-align:center">2×2矩阵行列式det([[a,b],[c,d]])=ad−bc</td>
+					<td style="vertical-align:middle; text-align:center">2乘2矩阵的行列式等于a乘d减b乘c</td>
+					<td style="vertical-align:middle; text-align:center">2乘2矩阵的行列式等于a乘d减b乘c</td>
+				</tr>
+				<tr>
+					<td style="vertical-align:middle; text-align:center">矩阵乘积C=AB，A是2×3，B是3×2，C是2×2</td>
+					<td style="vertical-align:middle; text-align:center">矩阵乘积C等于A乘B，A是2乘3矩阵，B是3乘2矩阵，C是2乘2矩阵</td>
+					<td style="vertical-align:middle; text-align:center">矩阵乘积C等于A乘B，A是2乘3矩阵，B是3乘2矩阵，C是2乘2矩阵</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+</article>
+</main>
+</div>
+
 </body>
 </html>
