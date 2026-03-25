@@ -518,6 +518,71 @@
 
 </div>
 
+<div class="container pt-5 mt-5 shadow-lg p-5 mb-5 bg-white rounded">
+	<h2 style="text-align: center;">Delay Frame Analysis</h2>
+
+	<p>
+		The latency results reported in this table are measured during inference on a single NVIDIA A6000 GPU. 
+		Qwen3-32B is used as the upstream text model to provide streaming input tokens. 
+		No additional acceleration is introduced, and all results are obtained using the original inference implementation to ensure fair comparison. 
+		The setting marked with <b>*</b> corresponds to the delay configuration used in our final StreamTN model.
+	</p>
+
+	<div class="table-responsive pt-3">
+		<table class="table table-hover pt-2">
+			<thead>
+				<tr>
+					<th style="text-align:center">Strategy</th>
+					<th style="text-align:center">Delay Frame</th>
+					<th style="text-align:center">F1</th>
+					<th style="text-align:center">Accuracy</th>
+					<th style="text-align:center">FPD (ms)</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td style="text-align:center">Non-Streaming</td>
+					<td style="text-align:center">-</td>
+					<td style="text-align:center"><b>0.8868</b></td>
+					<td style="text-align:center"><b>0.8870</b></td>
+					<td style="text-align:center">-</td>
+				</tr>
+				<tr>
+					<td style="text-align:center" rowspan="5">Streaming</td>
+					<td style="text-align:center">1 frame</td>
+					<td style="text-align:center">0.5859</td>
+					<td style="text-align:center">0.5872</td>
+					<td style="text-align:center">75</td>
+				</tr>
+				<tr>
+					<td style="text-align:center">2 frames</td>
+					<td style="text-align:center">0.7247</td>
+					<td style="text-align:center">0.7221</td>
+					<td style="text-align:center">121</td>
+				</tr>
+				<tr>
+					<td style="text-align:center">4 frames <b>*</b></td>
+					<td style="text-align:center">0.8191</td>
+					<td style="text-align:center">0.8202</td>
+					<td style="text-align:center">213</td>
+				</tr>
+				<tr>
+					<td style="text-align:center">8 frames</td>
+					<td style="text-align:center">0.8435</td>
+					<td style="text-align:center">0.8441</td>
+					<td style="text-align:center">394</td>
+				</tr>
+				<tr>
+					<td style="text-align:center">16 frames</td>
+					<td style="text-align:center">0.8178</td>
+					<td style="text-align:center">0.8191</td>
+					<td style="text-align:center">756</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
 </article>
 </main>
 </div>
