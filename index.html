@@ -528,11 +528,12 @@
 		<h2 style="text-align: center;">Delay Frame Analysis</h2>
 
 		<p>
-			The latency results reported in this table are measured during inference on a single NVIDIA A6000 GPU.
-			Qwen3-32B is used as the upstream text model to provide streaming input tokens.
-			No additional acceleration is introduced, and all results are obtained using the original inference implementation to ensure fair comparison.
-			FPD (ms) denotes First Packet Delay in milliseconds.
-			The configuration marked with <b>*</b> indicates the setting adopted in our main experiments.
+			<b>Latency measurement setup.</b> The upstream LLM (Qwen3-32B) is served with vLLM on 2&times;A6000 GPUs
+			(tensor_parallel_size=2, greedy decoding, gpu_memory_utilization=0.9, dtype=auto), producing roughly 20 tokens/s.
+			StreamTN and all local TN baselines run on a single NVIDIA A6000 GPU.
+			Encoding all test inputs with the Qwen3 tokenizer gives a mean length of 27.58 tokens.
+			FPD (ms) denotes First Packet Delay, decomposed as upstream waiting (the time to receive the first <i>d</i> tokens)
+			plus StreamTN computation. The configuration marked with <b>*</b> is adopted in our main experiments.
 		</p>
 
 		<div class="table-responsive pt-3">
@@ -590,7 +591,468 @@
 		</div>
 	</div>
 
-	</article>
+	<div class="container pt-5 mt-5 shadow-lg p-5 mb-5 bg-white rounded">
+	<h2 style="text-align: center;">Appendix: Supplementary Experiments</h2>
+	<p style="text-align: center;">Detailed latency decomposition, full evaluation metrics, and ablations referenced in the rebuttal.</p>
+
+	<h3>A. Latency Comparison</h3>
+	<p>
+		FPD is the sum of the upstream waiting time and the TN computation time. Streaming StreamTN starts after receiving
+		the first <i>d</i> tokens from Qwen3-32B (~20 tokens/s on 2&times;A6000). Non-streaming methods must wait for the
+		complete input (a mean of 27.58 tokens &rarr; roughly 1.4 s at 20 tokens/s) before producing any output, which is
+		the architectural latency advantage of the dual-track design.
+	</p>
+	<div class="table-responsive pt-2">
+		<table class="table table-hover pt-2">
+			<thead>
+				<tr>
+					<th style="text-align:center">Method</th>
+					<th style="text-align:center">Micro-F1</th>
+					<th style="text-align:center">Upstream Wait (ms)</th>
+					<th style="text-align:center">TN Compute (ms)</th>
+					<th style="text-align:center">FPD (ms)</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td style="text-align:center">StreamTN (streaming, d=1)</td>
+					<td style="text-align:center">0.7030</td>
+					<td style="text-align:center">70</td>
+					<td style="text-align:center">5</td>
+					<td style="text-align:center">75</td>
+				</tr>
+				<tr>
+					<td style="text-align:center">StreamTN (streaming, d=2)</td>
+					<td style="text-align:center">0.7952</td>
+					<td style="text-align:center">115</td>
+					<td style="text-align:center">6</td>
+					<td style="text-align:center">121</td>
+				</tr>
+				<tr>
+					<td style="text-align:center">StreamTN (streaming, d=4) <b>*</b></td>
+					<td style="text-align:center">0.8937</td>
+					<td style="text-align:center">206</td>
+					<td style="text-align:center">7</td>
+					<td style="text-align:center">213</td>
+				</tr>
+				<tr>
+					<td style="text-align:center">StreamTN (streaming, d=8)</td>
+					<td style="text-align:center">0.9072</td>
+					<td style="text-align:center">385</td>
+					<td style="text-align:center">9</td>
+					<td style="text-align:center">394</td>
+				</tr>
+				<tr>
+					<td style="text-align:center">StreamTN (streaming, d=16)</td>
+					<td style="text-align:center">0.9239</td>
+					<td style="text-align:center">744</td>
+					<td style="text-align:center">12</td>
+					<td style="text-align:center">756</td>
+				</tr>
+				<tr>
+					<td style="text-align:center">WeTextProcessing</td>
+					<td style="text-align:center">0.7853</td>
+					<td style="text-align:center">&asymp;1,400</td>
+					<td style="text-align:center">10.5</td>
+					<td style="text-align:center">&asymp;1,400</td>
+				</tr>
+				<tr>
+					<td style="text-align:center">Qwen3-0.6B (prompted)</td>
+					<td style="text-align:center">0.4872</td>
+					<td style="text-align:center">&asymp;1,400</td>
+					<td style="text-align:center">50.3</td>
+					<td style="text-align:center">&asymp;1,400</td>
+				</tr>
+				<tr>
+					<td style="text-align:center">FlatTN</td>
+					<td style="text-align:center">0.7569</td>
+					<td style="text-align:center">&asymp;1,400</td>
+					<td style="text-align:center">24.9</td>
+					<td style="text-align:center">&asymp;1,400</td>
+				</tr>
+				<tr>
+					<td style="text-align:center">BiLSTM</td>
+					<td style="text-align:center">0.8941</td>
+					<td style="text-align:center">&asymp;1,400</td>
+					<td style="text-align:center">2.8</td>
+					<td style="text-align:center">&asymp;1,400</td>
+				</tr>
+				<tr>
+					<td style="text-align:center">StreamTN (non-streaming)</td>
+					<td style="text-align:center">0.9639</td>
+					<td style="text-align:center">&asymp;1,400</td>
+					<td style="text-align:center">37.0</td>
+					<td style="text-align:center">&asymp;1,400</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<p>
+		<b>*</b> configuration adopted in our main experiments. For streaming rows, &ldquo;Upstream Wait&rdquo; is the time
+		to receive the first <i>d</i> tokens and &ldquo;TN Compute&rdquo; is StreamTN&rsquo;s incremental first-token compute.
+		For non-streaming methods, &ldquo;Upstream Wait&rdquo; is the time to receive the complete input, a simulated estimate
+		(&asymp;1.4 s) obtained from the mean input length (27.58 tokens) divided by the upstream token rate (~20 tokens/s)
+		rather than a directly measured value. FPD is therefore dominated by this wait, and the method&rsquo;s own compute
+		(mean, shown in the &ldquo;TN Compute&rdquo; column, &le;50 ms) adds only a negligible amount. TN compute for BiLSTM
+		and non-streaming StreamTN is the time to the first output token; for the other non-streaming methods it is the
+		full-output processing time.
+	</p>
+
+	<h3>B. Full Evaluation Metrics</h3>
+	<p>
+		Character-level Micro-F1 is the primary metric because it accommodates pronunciation-equivalent variants
+		(e.g., &ldquo;2900&yen;&rdquo; &rarr; &ldquo;两千九百元&rdquo; or &ldquo;二千九百元&rdquo; are both correct for TTS).
+		Sentence-level exact match and CER are reported as complementary, stricter metrics.
+	</p>
+	<div class="table-responsive pt-2">
+		<table class="table table-hover pt-2">
+			<thead>
+				<tr>
+					<th style="text-align:center">Method</th>
+					<th style="text-align:center">Micro-P</th>
+					<th style="text-align:center">Micro-R</th>
+					<th style="text-align:center">Micro-F1</th>
+					<th style="text-align:center">CER</th>
+					<th style="text-align:center">Sentence Acc.</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td style="text-align:center">WeTextProcessing</td>
+					<td style="text-align:center">0.7587</td>
+					<td style="text-align:center">0.8139</td>
+					<td style="text-align:center">0.7853</td>
+					<td style="text-align:center">0.2780</td>
+					<td style="text-align:center">0.4350</td>
+				</tr>
+				<tr>
+					<td style="text-align:center">Qwen3-0.6B (prompted)</td>
+					<td style="text-align:center">0.5282</td>
+					<td style="text-align:center">0.4521</td>
+					<td style="text-align:center">0.4872</td>
+					<td style="text-align:center">0.4774</td>
+					<td style="text-align:center">0.2655</td>
+				</tr>
+				<tr>
+					<td style="text-align:center">BiLSTM</td>
+					<td style="text-align:center">0.8677</td>
+					<td style="text-align:center">0.9222</td>
+					<td style="text-align:center">0.8941</td>
+					<td style="text-align:center">0.1698</td>
+					<td style="text-align:center">0.6038</td>
+				</tr>
+				<tr>
+					<td style="text-align:center">FlatTN</td>
+					<td style="text-align:center">0.7390</td>
+					<td style="text-align:center">0.7758</td>
+					<td style="text-align:center">0.7569</td>
+					<td style="text-align:center">0.3115</td>
+					<td style="text-align:center">0.3328</td>
+				</tr>
+				<tr>
+					<td style="text-align:center">StreamTN (non-streaming)</td>
+					<td style="text-align:center"><b>0.9620</b></td>
+					<td style="text-align:center"><b>0.9658</b></td>
+					<td style="text-align:center"><b>0.9639</b></td>
+					<td style="text-align:center"><b>0.0490</b></td>
+					<td style="text-align:center"><b>0.6838</b></td>
+				</tr>
+				<tr>
+					<td style="text-align:center">StreamTN (streaming, d=4)</td>
+					<td style="text-align:center">0.8931</td>
+					<td style="text-align:center">0.8943</td>
+					<td style="text-align:center">0.8937</td>
+					<td style="text-align:center">0.1399</td>
+					<td style="text-align:center">0.5523</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
+	<h3>C. Prompt Used for the General-Purpose LLM Baseline</h3>
+	<p>The exact prompt used to evaluate the non-fine-tuned Qwen3-0.6B baseline:</p>
+	<pre><code>messages = [
+    {"role": "system", "content": "你是一个专业的文本标准化助手，请为我做一个文本标准化任务，将原始文本中的数字时间符号等全部标准化为汉字，用于后续TTS系统合成。"},
+    {"role": "user", "content": raw_text.strip()}
+]</code></pre>
+	<p>
+		More detailed rule-based prompts were also tested but substantially increased per-item latency while still causing
+		frequent insertion, deletion, and out-of-input hallucination errors.
+	</p>
+
+	<h3>D. Zero-Vector Ablation: Shared Zero vs. Learned Delay Embedding</h3>
+	<p>
+		In the dual-track design, the input and output embeddings are added element-wise. During the delay phase the output
+		track contributes a zero vector, so the summed embedding carries only the raw input; once the input ends, the input
+		track contributes a zero vector, so the summed embedding carries only the output history. The phase is therefore
+		recoverable from whichever track is nonzero, which is why sharing a single zero vector for <i>delay</i> and
+		<i>pad</i> does not confuse the model. Replacing it with a learned delay embedding yields no consistent gain.
+	</p>
+	<div class="table-responsive pt-2">
+		<table class="table table-hover pt-2">
+			<thead>
+				<tr>
+					<th style="text-align:center">Delay Frame</th>
+					<th style="text-align:center">Micro-F1 (shared zero)</th>
+					<th style="text-align:center">Micro-F1 (learned delay)</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td style="text-align:center">1 frame</td>
+					<td style="text-align:center">0.7030 &plusmn; 0.0010</td>
+					<td style="text-align:center">0.7024 &plusmn; 0.0013</td>
+				</tr>
+				<tr>
+					<td style="text-align:center">2 frames</td>
+					<td style="text-align:center">0.7952 &plusmn; 0.0015</td>
+					<td style="text-align:center">0.7950 &plusmn; 0.0008</td>
+				</tr>
+				<tr>
+					<td style="text-align:center">4 frames <b>*</b></td>
+					<td style="text-align:center">0.8937 &plusmn; 0.0009</td>
+					<td style="text-align:center">0.8954 &plusmn; 0.0011</td>
+				</tr>
+				<tr>
+					<td style="text-align:center">8 frames</td>
+					<td style="text-align:center">0.9072 &plusmn; 0.0011</td>
+					<td style="text-align:center">0.9082 &plusmn; 0.0010</td>
+				</tr>
+				<tr>
+					<td style="text-align:center">16 frames</td>
+					<td style="text-align:center">0.9239 &plusmn; 0.0008</td>
+					<td style="text-align:center">0.9210 &plusmn; 0.0009</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
+	<h3>E. LoRA Rank / Alpha Ablation</h3>
+	<p>
+		With learning rate 1e-5 and the q/k/v/o projections fixed, a rank sweep (&alpha;=4r) raises Micro-F1 from 0.5228
+		(r=2) to 0.7292 (r=32), still below full fine-tuning (0.8937 at d=4). The gap is therefore configuration-dependent
+		rather than an inherent LoRA limitation.
+	</p>
+	<div class="table-responsive pt-2">
+		<table class="table table-hover pt-2">
+			<thead>
+				<tr>
+					<th style="text-align:center">Rank (&alpha;=4r)</th>
+					<th style="text-align:center">Micro-P</th>
+					<th style="text-align:center">Micro-R</th>
+					<th style="text-align:center">Micro-F1</th>
+					<th style="text-align:center">CER</th>
+					<th style="text-align:center">Sentence Acc.</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td style="text-align:center">r=2 (&alpha;=8)</td>
+					<td style="text-align:center">0.4959</td>
+					<td style="text-align:center">0.5527</td>
+					<td style="text-align:center">0.5228</td>
+					<td style="text-align:center">0.6480</td>
+					<td style="text-align:center">0.0135</td>
+				</tr>
+				<tr>
+					<td style="text-align:center">r=4 (&alpha;=16)</td>
+					<td style="text-align:center">0.5649</td>
+					<td style="text-align:center">0.6043</td>
+					<td style="text-align:center">0.5839</td>
+					<td style="text-align:center">0.5483</td>
+					<td style="text-align:center">0.0349</td>
+				</tr>
+				<tr>
+					<td style="text-align:center">r=8 (&alpha;=32)</td>
+					<td style="text-align:center">0.6251</td>
+					<td style="text-align:center">0.6423</td>
+					<td style="text-align:center">0.6336</td>
+					<td style="text-align:center">0.4727</td>
+					<td style="text-align:center">0.0658</td>
+				</tr>
+				<tr>
+					<td style="text-align:center">r=16 (&alpha;=64)</td>
+					<td style="text-align:center">0.6761</td>
+					<td style="text-align:center">0.6859</td>
+					<td style="text-align:center">0.6810</td>
+					<td style="text-align:center">0.4057</td>
+					<td style="text-align:center">0.1173</td>
+				</tr>
+				<tr>
+					<td style="text-align:center">r=32 (&alpha;=128)</td>
+					<td style="text-align:center">0.7319</td>
+					<td style="text-align:center">0.7264</td>
+					<td style="text-align:center">0.7292</td>
+					<td style="text-align:center">0.3441</td>
+					<td style="text-align:center">0.1783</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
+	<h3>F. Error Analysis</h3>
+	<p>
+		On the 1,262-sample test set, 565 samples (44.8%) contain at least one character-level
+		error. Character-level Levenshtein alignment (tie priority S&gt;D&gt;I) yields 33,684 matches, 2,736 substitutions
+		(51.9%), 1,264 deletions (24.0%), and 1,271 insertions (24.1%), for 5,271 total edits.
+	</p>
+	<div class="table-responsive pt-2">
+		<table class="table table-hover pt-2">
+			<thead>
+				<tr>
+					<th style="text-align:center">Category</th>
+					<th style="text-align:center">Samples</th>
+					<th style="text-align:center">M</th>
+					<th style="text-align:center">S</th>
+					<th style="text-align:center">D</th>
+					<th style="text-align:center">I</th>
+					<th style="text-align:center">Errors (%)</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr><td style="text-align:center">Integers and Decimals</td><td style="text-align:center">100</td><td style="text-align:center">1827</td><td style="text-align:center">70</td><td style="text-align:center">13</td><td style="text-align:center">22</td><td style="text-align:center">1.99</td></tr>
+				<tr><td style="text-align:center">Ordinal Numbers</td><td style="text-align:center">100</td><td style="text-align:center">2318</td><td style="text-align:center">138</td><td style="text-align:center">36</td><td style="text-align:center">59</td><td style="text-align:center">4.42</td></tr>
+				<tr><td style="text-align:center">Phone Numbers</td><td style="text-align:center">100</td><td style="text-align:center">2593</td><td style="text-align:center">167</td><td style="text-align:center">68</td><td style="text-align:center">46</td><td style="text-align:center">5.33</td></tr>
+				<tr><td style="text-align:center">Years and Dates</td><td style="text-align:center">97</td><td style="text-align:center">2620</td><td style="text-align:center">52</td><td style="text-align:center">25</td><td style="text-align:center">60</td><td style="text-align:center">2.60</td></tr>
+				<tr><td style="text-align:center">Time Expressions</td><td style="text-align:center">100</td><td style="text-align:center">2503</td><td style="text-align:center">26</td><td style="text-align:center">37</td><td style="text-align:center">81</td><td style="text-align:center">2.73</td></tr>
+				<tr><td style="text-align:center">Fractions and Percentages</td><td style="text-align:center">99</td><td style="text-align:center">2095</td><td style="text-align:center">70</td><td style="text-align:center">51</td><td style="text-align:center">31</td><td style="text-align:center">2.88</td></tr>
+				<tr><td style="text-align:center">Military Code</td><td style="text-align:center">100</td><td style="text-align:center">1268</td><td style="text-align:center">99</td><td style="text-align:center">14</td><td style="text-align:center">7</td><td style="text-align:center">2.28</td></tr>
+				<tr><td style="text-align:center">Uppercase Amounts</td><td style="text-align:center">70</td><td style="text-align:center">1326</td><td style="text-align:center">26</td><td style="text-align:center">4</td><td style="text-align:center">23</td><td style="text-align:center">1.01</td></tr>
+				<tr><td style="text-align:center">Amount Readings</td><td style="text-align:center">78</td><td style="text-align:center">1417</td><td style="text-align:center">87</td><td style="text-align:center">31</td><td style="text-align:center">22</td><td style="text-align:center">2.66</td></tr>
+				<tr><td style="text-align:center">Physical Units</td><td style="text-align:center">68</td><td style="text-align:center">1751</td><td style="text-align:center">27</td><td style="text-align:center">8</td><td style="text-align:center">13</td><td style="text-align:center">0.91</td></tr>
+				<tr><td style="text-align:center">Chemical Formulas and Equations</td><td style="text-align:center">100</td><td style="text-align:center">5571</td><td style="text-align:center">995</td><td style="text-align:center">428</td><td style="text-align:center">561</td><td style="text-align:center">37.64</td></tr>
+				<tr><td style="text-align:center">Simple Chemicals</td><td style="text-align:center">100</td><td style="text-align:center">2823</td><td style="text-align:center">244</td><td style="text-align:center">139</td><td style="text-align:center">68</td><td style="text-align:center">8.56</td></tr>
+				<tr><td style="text-align:center">Mathematical Expressions</td><td style="text-align:center">100</td><td style="text-align:center">2695</td><td style="text-align:center">98</td><td style="text-align:center">76</td><td style="text-align:center">31</td><td style="text-align:center">3.89</td></tr>
+				<tr><td style="text-align:center">Advanced Mathematical Expressions</td><td style="text-align:center">50</td><td style="text-align:center">2877</td><td style="text-align:center">637</td><td style="text-align:center">334</td><td style="text-align:center">247</td><td style="text-align:center">23.11</td></tr>
+			</tbody>
+		</table>
+	</div>
+	<p>
+		Complex chemistry and advanced mathematics account for 11.9% of samples but 60.7% of total edits, indicating that
+		whole-expression rewrites and omissions (hallucination / context loss) are the dominant failure mode for these
+		categories, rather than tokenizer fragmentation alone.
+	</p>
+
+	<h4>High-Frequency Edits</h4>
+	<div class="row">
+		<div class="col-md-4">
+			<h5 style="text-align:center">Substitutions (ref &rarr; hyp)</h5>
+			<table class="table table-hover pt-2">
+				<thead><tr><th style="text-align:center">Count</th><th style="text-align:center">Edit</th></tr></thead>
+				<tbody>
+					<tr><td style="text-align:center">41</td><td style="text-align:center">两 &rarr; 二</td></tr>
+					<tr><td style="text-align:center">32</td><td style="text-align:center">一 &rarr; 二</td></tr>
+					<tr><td style="text-align:center">25</td><td style="text-align:center">加 &rarr; 和</td></tr>
+					<tr><td style="text-align:center">23</td><td style="text-align:center">勾 &rarr; 九</td></tr>
+					<tr><td style="text-align:center">15</td><td style="text-align:center">一 &rarr; 1</td></tr>
+					<tr><td style="text-align:center">13</td><td style="text-align:center">二 &rarr; 2</td></tr>
+					<tr><td style="text-align:center">11</td><td style="text-align:center">三 &rarr; 3</td></tr>
+					<tr><td style="text-align:center">11</td><td style="text-align:center">千 &rarr; 百</td></tr>
+					<tr><td style="text-align:center">10</td><td style="text-align:center">十 &rarr; 0</td></tr>
+					<tr><td style="text-align:center">10</td><td style="text-align:center">加 &rarr; 与</td></tr>
+					<tr><td style="text-align:center">10</td><td style="text-align:center">甲 &rarr; 乙</td></tr>
+					<tr><td style="text-align:center">9</td><td style="text-align:center">四 &rarr; 4</td></tr>
+					<tr><td style="text-align:center">9</td><td style="text-align:center">幺 &rarr; 一</td></tr>
+					<tr><td style="text-align:center">9</td><td style="text-align:center">百 &rarr; 千</td></tr>
+					<tr><td style="text-align:center">8</td><td style="text-align:center">。 &rarr; ，</td></tr>
+					<tr><td style="text-align:center">8</td><td style="text-align:center">洞 &rarr; 零</td></tr>
+					<tr><td style="text-align:center">7</td><td style="text-align:center">五 &rarr; 5</td></tr>
+					<tr><td style="text-align:center">7</td><td style="text-align:center">三 &rarr; 二</td></tr>
+					<tr><td style="text-align:center">7</td><td style="text-align:center">拐 &rarr; 七</td></tr>
+					<tr><td style="text-align:center">6</td><td style="text-align:center">六 &rarr; 6</td></tr>
+					<tr><td style="text-align:center">6</td><td style="text-align:center">千 &rarr; 万</td></tr>
+					<tr><td style="text-align:center">6</td><td style="text-align:center">四 &rarr; 三</td></tr>
+					<tr><td style="text-align:center">6</td><td style="text-align:center">十 &rarr; 百</td></tr>
+					<tr><td style="text-align:center">5</td><td style="text-align:center">九 &rarr; 9</td></tr>
+					<tr><td style="text-align:center">5</td><td style="text-align:center">二 &rarr; 两</td></tr>
+					<tr><td style="text-align:center">5</td><td style="text-align:center">三 &rarr; 四</td></tr>
+					<tr><td style="text-align:center">5</td><td style="text-align:center">生 &rarr; 等</td></tr>
+					<tr><td style="text-align:center">5</td><td style="text-align:center">成 &rarr; 于</td></tr>
+					<tr><td style="text-align:center">5</td><td style="text-align:center">价 &rarr; 亚</td></tr>
+					<tr><td style="text-align:center">4</td><td style="text-align:center">万 &rarr; 百</td></tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="col-md-4">
+			<h5 style="text-align:center">Deletions</h5>
+			<table class="table table-hover pt-2">
+				<thead><tr><th style="text-align:center">Count</th><th style="text-align:center">Character</th></tr></thead>
+				<tbody>
+					<tr><td style="text-align:center">38</td><td style="text-align:center">的</td></tr>
+					<tr><td style="text-align:center">36</td><td style="text-align:center">二</td></tr>
+					<tr><td style="text-align:center">35</td><td style="text-align:center">，</td></tr>
+					<tr><td style="text-align:center">28</td><td style="text-align:center">分</td></tr>
+					<tr><td style="text-align:center">25</td><td style="text-align:center">一</td></tr>
+					<tr><td style="text-align:center">24</td><td style="text-align:center">十</td></tr>
+					<tr><td style="text-align:center">23</td><td style="text-align:center">百</td></tr>
+					<tr><td style="text-align:center">16</td><td style="text-align:center">在</td></tr>
+					<tr><td style="text-align:center">16</td><td style="text-align:center">(space)</td></tr>
+					<tr><td style="text-align:center">15</td><td style="text-align:center">于</td></tr>
+					<tr><td style="text-align:center">15</td><td style="text-align:center">数</td></tr>
+					<tr><td style="text-align:center">14</td><td style="text-align:center">加</td></tr>
+					<tr><td style="text-align:center">13</td><td style="text-align:center">以</td></tr>
+					<tr><td style="text-align:center">13</td><td style="text-align:center">三</td></tr>
+					<tr><td style="text-align:center">13</td><td style="text-align:center">酸</td></tr>
+					<tr><td style="text-align:center">12</td><td style="text-align:center">个</td></tr>
+					<tr><td style="text-align:center">12</td><td style="text-align:center">。</td></tr>
+					<tr><td style="text-align:center">12</td><td style="text-align:center">应</td></tr>
+					<tr><td style="text-align:center">11</td><td style="text-align:center">时</td></tr>
+					<tr><td style="text-align:center">11</td><td style="text-align:center">之</td></tr>
+					<tr><td style="text-align:center">11</td><td style="text-align:center">为</td></tr>
+					<tr><td style="text-align:center">11</td><td style="text-align:center">生</td></tr>
+					<tr><td style="text-align:center">11</td><td style="text-align:center">乘</td></tr>
+					<tr><td style="text-align:center">11</td><td style="text-align:center">x</td></tr>
+					<tr><td style="text-align:center">10</td><td style="text-align:center">五</td></tr>
+					<tr><td style="text-align:center">10</td><td style="text-align:center">号</td></tr>
+					<tr><td style="text-align:center">10</td><td style="text-align:center">锰</td></tr>
+					<tr><td style="text-align:center">10</td><td style="text-align:center">离</td></tr>
+					<tr><td style="text-align:center">10</td><td style="text-align:center">子</td></tr>
+					<tr><td style="text-align:center">9</td><td style="text-align:center">九</td></tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="col-md-4">
+			<h5 style="text-align:center">Insertions</h5>
+			<table class="table table-hover pt-2">
+				<thead><tr><th style="text-align:center">Count</th><th style="text-align:center">Character</th></tr></thead>
+				<tbody>
+					<tr><td style="text-align:center">47</td><td style="text-align:center">零</td></tr>
+					<tr><td style="text-align:center">43</td><td style="text-align:center">分</td></tr>
+					<tr><td style="text-align:center">42</td><td style="text-align:center">，</td></tr>
+					<tr><td style="text-align:center">40</td><td style="text-align:center">一</td></tr>
+					<tr><td style="text-align:center">29</td><td style="text-align:center">反</td></tr>
+					<tr><td style="text-align:center">28</td><td style="text-align:center">的</td></tr>
+					<tr><td style="text-align:center">27</td><td style="text-align:center">应</td></tr>
+					<tr><td style="text-align:center">25</td><td style="text-align:center">为</td></tr>
+					<tr><td style="text-align:center">24</td><td style="text-align:center">十</td></tr>
+					<tr><td style="text-align:center">22</td><td style="text-align:center">子</td></tr>
+					<tr><td style="text-align:center">21</td><td style="text-align:center">个</td></tr>
+					<tr><td style="text-align:center">21</td><td style="text-align:center">该</td></tr>
+					<tr><td style="text-align:center">18</td><td style="text-align:center">二</td></tr>
+					<tr><td style="text-align:center">17</td><td style="text-align:center">百</td></tr>
+					<tr><td style="text-align:center">16</td><td style="text-align:center">离</td></tr>
+					<tr><td style="text-align:center">15</td><td style="text-align:center">千</td></tr>
+					<tr><td style="text-align:center">15</td><td style="text-align:center">锰</td></tr>
+					<tr><td style="text-align:center">15</td><td style="text-align:center">化</td></tr>
+					<tr><td style="text-align:center">14</td><td style="text-align:center">1</td></tr>
+					<tr><td style="text-align:center">14</td><td style="text-align:center">氧</td></tr>
+					<tr><td style="text-align:center">14</td><td style="text-align:center">0</td></tr>
+					<tr><td style="text-align:center">11</td><td style="text-align:center">四</td></tr>
+					<tr><td style="text-align:center">11</td><td style="text-align:center">中</td></tr>
+					<tr><td style="text-align:center">11</td><td style="text-align:center">乙</td></tr>
+					<tr><td style="text-align:center">11</td><td style="text-align:center">于</td></tr>
+					<tr><td style="text-align:center">10</td><td style="text-align:center">和</td></tr>
+					<tr><td style="text-align:center">10</td><td style="text-align:center">价</td></tr>
+					<tr><td style="text-align:center">9</td><td style="text-align:center">是</td></tr>
+					<tr><td style="text-align:center">9</td><td style="text-align:center">六</td></tr>
+					<tr><td style="text-align:center">9</td><td style="text-align:center">x</td></tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+</article>
 </main>
 </div>
 </body>
