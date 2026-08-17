@@ -10,6 +10,44 @@
 	<link rel="stylesheet" href="css/normalize.css">
 	<link href="css/bootstrap.min.css" rel="stylesheet">
 	<title>StreamTN</title>
+<style>
+	.toc-tile {
+		display: block;
+		padding: 16px 10px;
+		border: 1px solid #dee2e6;
+		border-radius: 8px;
+		text-decoration: none;
+		color: #333;
+		background: #fafafa;
+		font-weight: 500;
+		height: 100%;
+		transition: all .15s ease;
+	}
+	.toc-tile:hover {
+		text-decoration: none;
+		color: #0d6efd;
+		border-color: #0d6efd;
+		box-shadow: 0 2px 10px rgba(0,0,0,.08);
+		transform: translateY(-1px);
+	}
+	.toc-chip {
+		display: inline-block;
+		padding: 6px 14px;
+		margin: 3px;
+		border: 1px solid #dee2e6;
+		border-radius: 20px;
+		text-decoration: none;
+		color: #555;
+		font-size: .9em;
+		transition: all .15s ease;
+	}
+	.toc-chip:hover {
+		text-decoration: none;
+		color: #0d6efd;
+		border-color: #0d6efd;
+		background: #f0f7ff;
+	}
+</style>
 </head>
 
 <body>
@@ -27,6 +65,24 @@
 	<p><b>This page is for research demonstration purposes only.</b></p>
 </div>
 
+<div class="container pt-4 mt-4 shadow-lg p-4 mb-5 bg-white rounded">
+	<h2 style="text-align: center; margin-bottom: 20px;">Contents</h2>
+	<div class="row" style="max-width: 900px; margin: 0 auto;">
+		<div class="col-6 col-md-3 mb-3"><a class="toc-tile" href="#model-overview">System Overview</a></div>
+		<div class="col-6 col-md-3 mb-3"><a class="toc-tile" href="#case-studies">Case Studies</a></div>
+		<div class="col-6 col-md-3 mb-3"><a class="toc-tile" href="#delay-frame-analysis">Delay Frame Analysis</a></div>
+		<div class="col-6 col-md-3 mb-3"><a class="toc-tile" href="#appendix">Appendix</a></div>
+	</div>
+	<div style="text-align: center; margin-top: 4px;">
+		<a class="toc-chip" href="#appendix-latency">A. Latency Comparison</a>
+		<a class="toc-chip" href="#appendix-metrics">B. Full Evaluation Metrics</a>
+		<a class="toc-chip" href="#appendix-prompt">C. LLM Baseline Prompt</a>
+		<a class="toc-chip" href="#appendix-zero-vector">D. Zero-Vector Ablation</a>
+		<a class="toc-chip" href="#appendix-lora">E. LoRA Ablation</a>
+		<a class="toc-chip" href="#appendix-error-analysis">F. Error Analysis</a>
+	</div>
+</div>
+
 <div class="container pt-5 mt-5 shadow-lg p-5 mb-5 bg-white rounded">
 	<h2 id="model-overview" style="text-align: center;">System Overview</h2>
 	<p style="text-align: center;">
@@ -38,7 +94,7 @@
 </div>
 
 <div class="container pt-5 mt-5 shadow-lg p-5 mb-5 bg-white rounded">
-	<h2 style="text-align: center;">Case Studies</h2>
+	<h2 id="case-studies" style="text-align: center;">Case Studies</h2>
 
 	<h3 style="margin-top: 30px;">Integers and Decimals</h3>
 	<div class="table-responsive pt-2">
@@ -525,7 +581,7 @@
 </div>
 
 	<div class="container pt-5 mt-5 shadow-lg p-5 mb-5 bg-white rounded">
-		<h2 style="text-align: center;">Delay Frame Analysis</h2>
+		<h2 id="delay-frame-analysis" style="text-align: center;">Delay Frame Analysis</h2>
 
 		<p>
 			<b>Latency measurement setup.</b> The upstream LLM (Qwen3-32B) is served with vLLM on 2&times;A6000 GPUs
@@ -592,10 +648,10 @@
 	</div>
 
 	<div class="container pt-5 mt-5 shadow-lg p-5 mb-5 bg-white rounded">
-	<h2 style="text-align: center;">Appendix: Supplementary Experiments</h2>
+	<h2 id="appendix" style="text-align: center;">Appendix: Supplementary Experiments</h2>
 	<p style="text-align: center;">Detailed latency decomposition, full evaluation metrics, and ablations referenced in the rebuttal.</p>
 
-	<h3>A. Latency Comparison</h3>
+	<h3 id="appendix-latency">A. Latency Comparison</h3>
 	<p>
 		FPD is the sum of the upstream waiting time and the TN computation time. Streaming StreamTN starts after receiving
 		the first <i>d</i> tokens from Qwen3-32B (~20 tokens/s on 2&times;A6000). Non-streaming methods must wait for the
@@ -698,7 +754,7 @@
 		full-output processing time.
 	</p>
 
-	<h3>B. Full Evaluation Metrics</h3>
+	<h3 id="appendix-metrics">B. Full Evaluation Metrics</h3>
 	<p>
 		Character-level Micro-F1 is the primary metric because it accommodates pronunciation-equivalent variants
 		(e.g., &ldquo;2900&yen;&rdquo; &rarr; &ldquo;两千九百元&rdquo; or &ldquo;二千九百元&rdquo; are both correct for TTS).
@@ -769,7 +825,7 @@
 		</table>
 	</div>
 
-	<h3>C. Prompt Used for the General-Purpose LLM Baseline</h3>
+	<h3 id="appendix-prompt">C. Prompt Used for the General-Purpose LLM Baseline</h3>
 	<p>The exact prompt used to evaluate the non-fine-tuned Qwen3-0.6B baseline:</p>
 	<pre><code>messages = [
     {"role": "system", "content": "你是一个专业的文本标准化助手，请为我做一个文本标准化任务，将原始文本中的数字时间符号等全部标准化为汉字，用于后续TTS系统合成。"},
@@ -780,7 +836,7 @@
 		frequent insertion, deletion, and out-of-input hallucination errors.
 	</p>
 
-	<h3>D. Zero-Vector Ablation: Shared Zero vs. Learned Delay Embedding</h3>
+	<h3 id="appendix-zero-vector">D. Zero-Vector Ablation: Shared Zero vs. Learned Delay Embedding</h3>
 	<p>
 		In the dual-track design, the input and output embeddings are added element-wise. During the delay phase the output
 		track contributes a zero vector, so the summed embedding carries only the raw input; once the input ends, the input
@@ -827,7 +883,7 @@
 		</table>
 	</div>
 
-	<h3>E. LoRA Rank / Alpha Ablation</h3>
+	<h3 id="appendix-lora">E. LoRA Rank / Alpha Ablation</h3>
 	<p>
 		With learning rate 1e-5 and the q/k/v/o projections fixed, a rank sweep (&alpha;=4r) raises Micro-F1 from 0.5228
 		(r=2) to 0.7292 (r=32), still below full fine-tuning (0.8937 at d=4). The gap is therefore configuration-dependent
@@ -890,7 +946,7 @@
 		</table>
 	</div>
 
-	<h3>F. Error Analysis</h3>
+	<h3 id="appendix-error-analysis">F. Error Analysis</h3>
 	<p>
 		On the 1,262-sample test set, 565 samples (44.8%) contain at least one character-level
 		error. Character-level Levenshtein alignment (tie priority S&gt;D&gt;I) yields 33,684 matches, 2,736 substitutions
