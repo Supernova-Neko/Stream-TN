@@ -1,0 +1,11 @@
+{
+    "learning_rate":1e-5,
+    "scheduler_steps": 6500,
+    "num_warmup_steps": 200,
+    "max_tokens": 1000,
+    "max_batch_size": 999,
+    "device": "cuda",
+    "precision": "bf16",
+    "data_path": "train_data/example_data",
+    "eval_data_path": ""
+}

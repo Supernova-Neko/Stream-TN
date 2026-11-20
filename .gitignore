@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+
+# Model weights and training outputs are downloaded / generated locally.
+*.safetensors
+*.bin
+*.pkl
+# Locally prepared release model (upload to Hugging Face, do not commit to GitHub).
+hf_model/
+exp/
+output/
+checkpoints/
+wandb/

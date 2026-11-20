@@ -1,0 +1,13 @@
+# torch 2.10+ ships cu13 wheels and needs a newer NVIDIA driver; <2.10 keeps
+# cu12 wheels that work with CUDA 12.x drivers.
+torch>=2.1,<2.10
+transformers>=4.51
+safetensors>=0.4
+huggingface_hub>=0.24
+accelerate>=1.0
+datasets>=2.19
+numpy>=1.24
+tqdm>=4.66
+
+# Optional, only for training logs:
+# pip install wandb
