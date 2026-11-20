@@ -40,23 +40,29 @@ The [demo page](https://supernova-neko.github.io/Stream-TN/) hosts the material 
 - **Delay-frame analysis**, relating the delay setting to accuracy and FPD
 - **Supplementary experiments**: latency comparison against non-streaming baselines, full evaluation metrics, the LLM baseline prompt, zero-vector and LoRA ablations, and character-level error analysis
 
-## Installation
+## Quickstart
 
-Python 3.10 or newer is recommended. Model weights are downloaded from the Hugging Face Hub on first use, so no local model directory is required.
+Model weights are downloaded from Hugging Face automatically. Use `--model` or `STREAMTN_MODEL_ID` to select another repository or a local model directory.
+
+### Installation
+
+Python 3.10 and Linux x86_64 are recommended. Run the following commands from the repository root:
 
 ```bash
-git clone <repository-url> streamtn_open
-cd streamtn_open
+conda create -n streamtn python=3.10 -y
+conda activate streamtn
 pip install -r requirements.txt
 ```
 
-`wandb` is optional and only needed for training logs:
+For training logs, install WandB after the base requirements:
 
 ```bash
 pip install wandb
 ```
 
-## Inference
+The base requirements pin `torch>=2.1,<2.10` for CUDA 12.x drivers. On newer NVIDIA drivers you may remove the upper bound. CPU-only inference works without WandB.
+
+### Inference
 
 ```bash
 python infer_single.py --text "他今天走了12.5公里"
@@ -75,7 +81,7 @@ python infer_single.py --model your-org/your-fork --text "电脑的售价是4899
 
 `--device` accepts `auto` (default), `cpu`, `cuda`, `cuda:0`, and similar values.
 
-## Model weights
+### Model weights
 
 | Setting | Default | Override |
 | :--- | :--- | :--- |
@@ -102,14 +108,69 @@ The launch script uses `CUDA_VISIBLE_DEVICES=0,1` with two processes by default;
 
 ## Evaluation
 
-The paper introduces a Chinese TN benchmark with 1,262 test samples. Character-level Micro-F1 is the primary metric because it accepts pronunciation-equivalent variants.
+The paper introduces a Chinese TN benchmark with 1,262 test samples. Character-level Micro-F1 is the primary metric because it accepts pronunciation-equivalent variants. The four tables below reproduce Tables I–IV of the paper; latency decomposition, the LLM baseline prompt, LoRA rank ablation, and error analysis are on the [demo page](https://supernova-neko.github.io/Stream-TN/).
 
-| Configuration | Micro-F1 | Micro-P | FPD |
+### Main results (Table I)
+
+StreamTN is compared with a rule-based toolkit, a prompted general-purpose LLM, and neural TN baselines:
+
+| Method | Micro-F1 | Micro-P |
+| :--- | ---: | ---: |
+| WeTextProcessing | 0.7853 | 0.7586 |
+| Qwen3-0.6B (prompted) | 0.4872 | 0.5282 |
+| FlatTN | 0.7569 ± 0.0019 | 0.7390 ± 0.0017 |
+| BiLSTM | 0.8941 ± 0.0015 | 0.8677 ± 0.0012 |
+| **StreamTN** | 0.8937 ± 0.0009 | 0.8931 ± 0.0022 |
+
+StreamTN uses the 4-frame streaming setting with a 213 ms FPD and achieves the best Micro-P. BiLSTM is marginally higher on Micro-F1 but is non-streaming and must wait for the complete input.
+
+### Per-category results (Table II)
+
+Micro-averaged precision, recall and F1 of StreamTN across 14 TN categories:
+
+| TN Type | Micro-P | Micro-R | Micro-F1 |
 | :--- | ---: | ---: | ---: |
-| StreamTN, streaming (4-frame delay) | 0.8937 | 0.8931 | 213 ms |
-| StreamTN, non-streaming | 0.9639 | 0.9620 | — |
+| Integers and Decimals | 0.959 ± 0.006 | 0.963 ± 0.004 | 0.961 ± 0.004 |
+| Ordinal Numbers | 0.923 ± 0.010 | 0.929 ± 0.005 | 0.926 ± 0.007 |
+| Phone Numbers | 0.919 ± 0.008 | 0.917 ± 0.008 | 0.918 ± 0.008 |
+| Years and Dates | 0.949 ± 0.009 | 0.957 ± 0.009 | 0.953 ± 0.009 |
+| Time | 0.956 ± 0.002 | 0.978 ± 0.003 | 0.967 ± 0.001 |
+| Fractions and Percentages | 0.964 ± 0.009 | 0.947 ± 0.006 | 0.955 ± 0.007 |
+| Military Passwords | 0.925 ± 0.003 | 0.924 ± 0.004 | 0.925 ± 0.003 |
+| Capital Amounts | 0.970 ± 0.004 | 0.979 ± 0.001 | 0.975 ± 0.002 |
+| Amount Reading | 0.927 ± 0.006 | 0.919 ± 0.011 | 0.923 ± 0.007 |
+| Physical Units | 0.976 ± 0.003 | 0.978 ± 0.003 | 0.977 ± 0.003 |
+| Chemical Formulas | 0.785 ± 0.008 | 0.797 ± 0.006 | 0.791 ± 0.006 |
+| Daily Chemicals | 0.913 ± 0.008 | 0.884 ± 0.009 | 0.898 ± 0.007 |
+| Simple Math Equations | 0.956 ± 0.005 | 0.943 ± 0.005 | 0.950 ± 0.005 |
+| Complex Math Equations | 0.749 ± 0.014 | 0.751 ± 0.007 | 0.750 ± 0.009 |
 
-The non-streaming variant sees the entire input and sets an accuracy upper bound, but cannot emit anything until the full sequence arrives. Full metrics, latency decomposition, ablations, and error analysis are on the [demo page](https://supernova-neko.github.io/Stream-TN/).
+Regular, frequently observed categories (physical units, capital amounts, time) exceed 0.96 Micro-F1. Complex mathematical equations and chemical formulas remain the most challenging at 0.750 and 0.791. The small standard deviations indicate consistent results across training seeds.
+
+### Ablation (Table III)
+
+| Method | Micro-F1 | Micro-P |
+| :--- | ---: | ---: |
+| **StreamTN** | 0.8937 ± 0.0009 | 0.8931 ± 0.0022 |
+| w/ LoRA Fine-tuning | 0.6335 ± 0.0012 | 0.6250 ± 0.0015 |
+| w/ System Prompt | 0.8852 ± 0.0018 | 0.8824 ± 0.0021 |
+
+Full-parameter fine-tuning is important for the precise transformations required by TN, and StreamTN generates structured normalized text without carefully engineered prompts.
+
+### Delay frames (Table IV)
+
+FPD denotes first-packet delay in milliseconds; `(main)` marks the configuration used in the main experiments.
+
+| Strategy | Delay frame | Micro-F1 | Micro-P | FPD (ms) |
+| :--- | :--- | ---: | ---: | ---: |
+| Non-Streaming | — | 0.9639 ± 0.0011 | 0.9620 ± 0.0012 | — |
+| Streaming | 1 frame | 0.7030 ± 0.0010 | 0.7135 ± 0.0018 | 75 |
+| Streaming | 2 frames | 0.7952 ± 0.0015 | 0.8062 ± 0.0026 | 121 |
+| Streaming | 4 frames (main) | 0.8937 ± 0.0009 | 0.8931 ± 0.0022 | 213 |
+| Streaming | 8 frames | 0.9072 ± 0.0011 | 0.9093 ± 0.0020 | 394 |
+| Streaming | 16 frames | 0.9239 ± 0.0008 | 0.9303 ± 0.0015 | 756 |
+
+More delay frames give the model more context and improve normalization, at the cost of a longer FPD (75 ms → 756 ms). The 4-frame setting is the practical trade-off, reaching Micro-F1 0.8937 at 213 ms. The non-streaming variant has the highest accuracy but must wait for the complete input.
 
 ## Citation
 
