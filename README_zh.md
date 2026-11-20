@@ -1,12 +1,19 @@
-# StreamTN
+<h1 align="center">StreamTN</h1>
 
-**StreamTN：面向流式 TTS 对话系统的低延迟中文流式文本正则化模型**
+<p align="center">
+  <b>面向流式 TTS 对话系统的低延迟中文流式文本正则化模型</b>
+</p>
 
-[English](README.md) | [简体中文](README_zh.md)
+<p align="center">
+  <b>0.6B LM · 双轨流式 · 213 ms 首包延迟 · 中文 TN 评测基准</b>
+</p>
 
-| **论文** | **Demo 页面** | **Hugging Face** |
-| :---: | :---: | :---: |
-| [PDF](assets/StreamTN_paper.pdf) | [补充实验](https://supernova-neko.github.io/Stream-TN/) | [starstarcat/StreamTN](https://huggingface.co/starstarcat/StreamTN) |
+<p align="center">
+  <a href="README.md">English</a> | 简体中文<br>
+  <a href="assets/StreamTN_paper.pdf">论文</a> ·
+  <a href="https://supernova-neko.github.io/Stream-TN/">Demo 页面</a> ·
+  <a href="https://huggingface.co/starstarcat/StreamTN">Hugging Face</a>
+</p>
 
 StreamTN 是面向以大语言模型为中心的口语对话系统的轻量级中文流式文本正则化（Text Normalization, TN）模型。它位于上游 LLM 与下游 TTS 模块之间，将 LLM 逐步输出的部分文本转换为可供 TTS 合成的中文文本，无需等待整句生成完毕。
 

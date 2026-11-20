@@ -1,12 +1,19 @@
-# StreamTN
+<h1 align="center">StreamTN</h1>
 
-**StreamTN: A Low-Latency Streaming Chinese Text Normalization Model for Streaming TTS in Dialogue Systems**
+<p align="center">
+  <b>A Low-Latency Streaming Chinese Text Normalization Model for Streaming TTS in Dialogue Systems</b>
+</p>
 
-[English](README.md) | [简体中文](README_zh.md)
+<p align="center">
+  <b>0.6B LM · Dual-Track Streaming · 213 ms First-Packet Delay · Chinese TN Benchmark</b>
+</p>
 
-| **Paper** | **Demo Page** | **Hugging Face** |
-| :---: | :---: | :---: |
-| [PDF](assets/StreamTN_paper.pdf) | [Supplementary experiments](https://supernova-neko.github.io/Stream-TN/) | [starstarcat/StreamTN](https://huggingface.co/starstarcat/StreamTN) |
+<p align="center">
+  English | <a href="README_zh.md">简体中文</a><br>
+  <a href="assets/StreamTN_paper.pdf">Paper</a> ·
+  <a href="https://supernova-neko.github.io/Stream-TN/">Demo Page</a> ·
+  <a href="https://huggingface.co/starstarcat/StreamTN">Hugging Face</a>
+</p>
 
 StreamTN is a lightweight Chinese streaming text normalization (TN) model for LLM-centered spoken dialogue systems. It sits between the upstream LLM and the downstream TTS module, converting partial LLM output into TTS-readable Chinese text without waiting for the complete response.
 
